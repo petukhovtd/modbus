@@ -57,16 +57,16 @@ std::pair< unsigned char, unsigned char > FromU8( uint8_t u );
 /// @param[in] from начало бинарных данных
 /// @param[out] to начало записи ascii данных
 /// @param[in] size размер бинарных данных
-/// @throw std::logic_error положение итераторов не соответствует ожиданиям
 void ToAscii( modbus::AduBuffer::iterator from, modbus::AduBuffer::iterator to, size_t size );
 
 /// @brief Конвертирование ascii в байты
 /// Бинарные данные находятся позади ascii в процессе преобразования
 /// поэтому преобразование не выделяет дополнительной памяти
+/// !! Ожидается что итераторы from и to указывают на один контейнер
 /// @param[in] from начало ascii данных
 /// @param[out] to начало записи бинарных данных
 /// @param[in] size размер ascii данных
-/// @throw std::logic_error положение итераторов не соответствует ожиданиям
+/// @throw std::logic_error from < to более чем на 1 байт, что приведет к повреждению данных
 void FromAscii( modbus::AduBuffer::iterator from, modbus::AduBuffer::iterator to, size_t size );
 
 /// @brief Расчитать LRC последовательности байт

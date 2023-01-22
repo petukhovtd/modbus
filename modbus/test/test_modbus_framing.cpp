@@ -137,22 +137,13 @@ TEST( ModbusFraming, asciiFromU8 )
 TEST( ModbusFraming, asciiToAscii )
 {
      using namespace modbus;
-     {
-          AduBuffer binary = { 0x12, 0x34 };
-          EXPECT_THROW( ascii::ToAscii( binary.begin(), binary.begin(), binary.size() ),
-                        std::logic_error );
-          EXPECT_THROW( ascii::ToAscii( binary.begin() + 1, binary.begin(), binary.size() ),
-                        std::logic_error );
-     }
-     {
-          static const size_t shift = 1;
-          AduBuffer binary = { 0x12, 0x5A, 0x08 };
-          static const AduBuffer asciiReference = { 0x12, '1', '2', '5', 'A', '0', '8' };
-          size_t size = binary.size();
-          binary.resize( binary.size() * 2 + 1 );
-          ascii::ToAscii( binary.begin(), binary.begin() + shift, size );
-          EXPECT_TRUE( test::Compare( binary.cbegin(), binary.cend(), asciiReference.begin(), asciiReference.end() ) );
-     }
+
+     AduBuffer binary = { 0x12, 0x5A, 0x08 };
+     static const AduBuffer asciiReference = { '1', '2', '5', 'A', '0', '8' };
+     size_t size = binary.size();
+     binary.resize( binary.size() * 2 );
+     ascii::ToAscii( binary.begin(), binary.begin(), size );
+     EXPECT_TRUE( test::Compare( binary.cbegin(), binary.cend(), asciiReference.begin(), asciiReference.end() ) );
 }
 
 TEST( ModbusFraming, asciiFromAscii )
@@ -160,13 +151,24 @@ TEST( ModbusFraming, asciiFromAscii )
      using namespace modbus;
      {
           AduBuffer ascii = { '1', '2', '5', 'A', '0', '8' };
-          EXPECT_THROW( ascii::FromAscii( ascii.begin(), ascii.begin(), ascii.size() ), std::logic_error );
-          EXPECT_THROW( ascii::FromAscii( ascii.begin(), ascii.begin() + 1, ascii.size() ), std::logic_error );
+          EXPECT_THROW( ascii::FromAscii( ascii.begin(), ascii.begin() + 2, ascii.size() ), std::logic_error );
      }
      {
           AduBuffer ascii = { 0x0, '1', '2', '5', 'A', '0', '8' };
           static const AduBuffer binaryReference = { 0x12, 0x5A, 0x08, '5', 'A', '0', '8' };
           ascii::FromAscii( ascii.begin() + 1, ascii.begin(), ascii.size() - 1 );
+          EXPECT_TRUE( test::Compare( ascii.cbegin(), ascii.cend(), binaryReference.begin(), binaryReference.end() ) );
+     }
+     {
+          AduBuffer ascii = { 0x0, '1', '2', '5', 'A', '0', '8' };
+          static const AduBuffer binaryReference = { 0x0, 0x12, 0x5A, 0x08, 'A', '0', '8' };
+          ascii::FromAscii( ascii.begin() + 1, ascii.begin() + 1, ascii.size() - 1 );
+          EXPECT_TRUE( test::Compare( ascii.cbegin(), ascii.cend(), binaryReference.begin(), binaryReference.end() ) );
+     }
+     {
+          AduBuffer ascii = { 0x0, '1', '2', '5', 'A', '0', '8' };
+          static const AduBuffer binaryReference = { 0x0, '1', 0x12, 0x5A, 0x08, '0', '8' };
+          ascii::FromAscii( ascii.begin() + 1, ascii.begin() + 2, ascii.size() - 1 );
           EXPECT_TRUE( test::Compare( ascii.cbegin(), ascii.cend(), binaryReference.begin(), binaryReference.end() ) );
      }
 }

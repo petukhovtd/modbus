@@ -64,16 +64,15 @@ static_assert( asciiOverhead == 7 );
 static const size_t aduAsciiMaxSize = pduMaxSize * 2 + asciiOverhead;
 static_assert( aduAsciiMaxSize == 513 );
 
-// | ----------------------- ADU ----------------------------------------------------|
-//                                    | ----------- PDU ---------|
-// |  0 |  1 |  2 |  3 |  4 |  5 |  6 |  7 |  8 |  9 | 10 |
-// TCP
-// | tr id   | pr id   | len     | id | fc | data
-//                               RTU
-//                               | id | fc | data                | CRC (2) |
-//                       ASCII      ^   ^----  ^-------
-//                          |star| id      | fc      | data      | LRC (2) | end (2) |
-// ASCII frame convertible to RTU type after received, and before sending
+//                                   | ----------- PDU ---------|
+//|  0 |  1 |  2 |  3 |  4 |  5 |  6 |  7 |  8 |  9 | 10 |      |
+//| tr id   | pr id   | len     | id | fc | data                |
+//| ----------------------- TCP ADU ----------------------------|
+//                              | id | fc | data                | CRC (2) |
+//                              | -------------- RTU ADU -----------------|
+//                         |star| id      | fc      | data      | LRC (2) | end (2) |
+//                         | ---------------- ASCII ADU ----------------------------|
+//                                        | ----- ASCII PDU ----|
 
 static const size_t aduTcpStart = 0; // Начало tcp фрейма
 static const size_t aduRtuStart = transactionIdSize + protocolIdSize + lengthSize; // Начало rtu фрейма
