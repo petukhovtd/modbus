@@ -6,3 +6,4 @@ set(CMAKE_CXX_STANDARD_REQUIRED 17)
 
 add_subdirectory(third_party)
 add_subdirectory(modbus)
+add_subdirectory(example)
