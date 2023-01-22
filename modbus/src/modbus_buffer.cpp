@@ -148,7 +148,6 @@ void ModbusBuffer::ConvertTo( FrameType toType )
           return;
      }
 
-     uint8_t unitId = GetUnitId();
      size_t pduSize = CalculatePduSize( type_, aduSize_ );
 
      if( pduSize >= aduSize_ )
@@ -160,9 +159,9 @@ void ModbusBuffer::ConvertTo( FrameType toType )
      // RTU -> ASCII
      if( toType == FrameType::ASCII )
      {
-          ascii::ToAscii( buffer_.begin() + functionCodeGeneralPos,
-                          buffer_.begin() + functionCodeASCIIPos,
-                          pduSize );
+          ascii::ToAscii( buffer_.begin() + unitIdGeneralPos,
+                          buffer_.begin() + unitIdGeneralPos,
+                          unitIdSize + pduSize );
           pduSize *= 2;
      }
 
@@ -170,15 +169,14 @@ void ModbusBuffer::ConvertTo( FrameType toType )
      // ASCII -> TCP
      if( type_ == FrameType::ASCII )
      {
-          ascii::FromAscii( buffer_.begin() + functionCodeASCIIPos,
-                            buffer_.begin() + functionCodeGeneralPos,
-                            pduSize );
+          ascii::FromAscii( buffer_.begin() + unitIdGeneralPos,
+                            buffer_.begin() + unitIdGeneralPos,
+                            unitIdSize * 2 + pduSize );
           pduSize /= 2;
      }
 
      type_ = toType;
      aduSize_ = CalculateAduSize( type_, pduSize );
-     SetUnitId( unitId );
 }
 
 }

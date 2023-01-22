@@ -78,10 +78,6 @@ std::pair< unsigned char, unsigned char > FromU8( uint8_t u )
 
 void ToAscii( modbus::AduBuffer::iterator from, modbus::AduBuffer::iterator to, size_t size )
 {
-     if( std::distance( from, to ) <= 0 )
-     {
-          throw std::logic_error( "from <= to, expect to > from" );
-     }
      modbus::AduBuffer tmp( from, from + size );
      for( const modbus::AduBuffer::value_type value: tmp )
      {
@@ -95,9 +91,9 @@ void ToAscii( modbus::AduBuffer::iterator from, modbus::AduBuffer::iterator to, 
 
 void FromAscii( modbus::AduBuffer::iterator from, modbus::AduBuffer::iterator to, size_t size )
 {
-     if( std::distance( from, to ) >= 0 )
+     if( std::distance( from, to ) > 1 )
      {
-          throw std::logic_error( "from >= to, expect to < from" );
+          throw std::logic_error( "from > to more then 1 byte" );
      }
      const auto fromEnd = from + size;
      for( ; from != fromEnd; ++from )

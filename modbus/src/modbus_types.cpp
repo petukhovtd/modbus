@@ -7,7 +7,7 @@ namespace modbus
 
 AduBuffer MakeAduBuffer()
 {
-     return AduBuffer( aduBufferMaxSize, aduDefaultValue );
+     return AduBuffer( aduBufferMaxSize );
 }
 
 size_t GetAduStart( FrameType type )
