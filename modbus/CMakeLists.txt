@@ -26,4 +26,6 @@ target_compile_options(${PROJECT_NAME} PRIVATE
           -Wno-uninitialized
 )
 
-add_subdirectory(test)
+if(MODBUS_UNIT_TEST)
+     add_subdirectory(test)
+endif()
