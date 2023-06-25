@@ -1,7 +1,8 @@
+#pragma once
 #ifndef MODBUS_MODBUS_BUFFER_ASCII_WRAPPER_H
 #define MODBUS_MODBUS_BUFFER_ASCII_WRAPPER_H
 
-#include <modbus/modbus_buffer.h>
+#include <modbus/modbus_buffer_wrapper.h>
 
 namespace modbus
 {

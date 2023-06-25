@@ -1,3 +1,4 @@
+#pragma once
 #ifndef MODBUS_TEST_COMMON_H
 #define MODBUS_TEST_COMMON_H
 

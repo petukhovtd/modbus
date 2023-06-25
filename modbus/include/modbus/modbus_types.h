@@ -1,3 +1,4 @@
+#pragma once
 #ifndef MODBUS_MODBUS_TYPES_H
 #define MODBUS_MODBUS_TYPES_H
 

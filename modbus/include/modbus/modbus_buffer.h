@@ -1,3 +1,4 @@
+#pragma once
 #ifndef MODBUS_MODBUS_BUFFER_H
 #define MODBUS_MODBUS_BUFFER_H
 
@@ -84,32 +85,6 @@ private:
      FrameType type_;
      AduBuffer buffer_;
      size_t aduSize_;
-};
-
-/// @brief Результат проверки фрейма
-enum class CheckFrameResult
-{
-     NoError = 0,
-     TcpInvalidProtocolId,
-     TcpInvalidLength,
-     RtuInvalidCrc,
-     AsciiInvalidStartTag,
-     AsciiInvalidLrc,
-     AsciiInvalidEndTag,
-};
-
-/// @brief Вспомогательная обертка со специфичными для каждого фрейма
-class IModbusBufferWrapper
-{
-public:
-     virtual ~IModbusBufferWrapper() = default;
-
-     /// @brief Проверка фрейма
-     /// @return
-     virtual CheckFrameResult Check() const = 0;
-
-     /// @brief Обновление специальный полей фрейма
-     virtual void Update() = 0;
 };
 
 }
