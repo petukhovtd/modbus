@@ -1,41 +1,37 @@
 #pragma once
-#ifndef MODBUS_MODBUS_TYPES_H
-#define MODBUS_MODBUS_TYPES_H
 
 #include <memory>
 #include <vector>
 #include <cstdint>
 
-namespace modbus
-{
+namespace modbus {
 
-enum FrameType
-{
-     RTU,
-     ASCII,
-     TCP
+enum FrameType {
+    RTU,
+    ASCII,
+    TCP
 };
 
 // Rtu
 using UnitId = uint8_t;
-using FunctionCode = uint8_t ;
+using FunctionCode = uint8_t;
 
-static const size_t unitIdSize = sizeof( UnitId );
+static const size_t unitIdSize = sizeof(UnitId);
 static const UnitId unitIdMin = 1;
 static const UnitId unitIdMax = 247;
-static const size_t functionCodeSize = sizeof( FunctionCode );
+static const size_t functionCodeSize = sizeof(FunctionCode);
 static const size_t crcSize = 2;
 static const size_t pduMinSize = functionCodeSize;
 
 static const size_t aduRtuMaxSize = 256; // 256 serial implementation limit
 
 static const size_t rtuOverhead = unitIdSize + crcSize;
-static_assert( rtuOverhead == 3 );
+static_assert(rtuOverhead == 3);
 static const size_t pduMaxSize = aduRtuMaxSize - rtuOverhead;
-static_assert( pduMaxSize == 253 );
+static_assert(pduMaxSize == 253);
 
 static const size_t dataMaxSize = pduMaxSize - functionCodeSize;
-static_assert( dataMaxSize == 252 );
+static_assert(dataMaxSize == 252);
 
 // Tcp
 using TransactionId = uint16_t;
@@ -43,15 +39,15 @@ using ProtocolId = uint16_t;
 using Length = uint16_t;
 
 static const ProtocolId modbusProtocolId = 0;
-static const size_t transactionIdSize = sizeof( TransactionId );
-static const size_t protocolIdSize = sizeof( ProtocolId );
-static const size_t lengthSize = sizeof( Length );
+static const size_t transactionIdSize = sizeof(TransactionId);
+static const size_t protocolIdSize = sizeof(ProtocolId);
+static const size_t lengthSize = sizeof(Length);
 
 static const size_t mbapSize = transactionIdSize + protocolIdSize + lengthSize + unitIdSize;
-static_assert( mbapSize == 7 );
+static_assert(mbapSize == 7);
 
 static const size_t aduTcpMaxSize = pduMaxSize + mbapSize;
-static_assert( aduTcpMaxSize == 260 );
+static_assert(aduTcpMaxSize == 260);
 
 // Ascii
 static const uint8_t asciiStart = 0x3A; // :
@@ -60,10 +56,10 @@ static const size_t asciiStartSize = 1;
 static const size_t asciiLrcSize = 2;
 static const size_t asciiEndSize = 2;
 static const size_t asciiOverhead = asciiStartSize + unitIdSize * 2 + asciiLrcSize + asciiEndSize;
-static_assert( asciiOverhead == 7 );
+static_assert(asciiOverhead == 7);
 
 static const size_t aduAsciiMaxSize = pduMaxSize * 2 + asciiOverhead;
-static_assert( aduAsciiMaxSize == 513 );
+static_assert(aduAsciiMaxSize == 513);
 
 //                                   | ----------- PDU ---------|
 //|  0 |  1 |  2 |  3 |  4 |  5 |  6 |  7 |  8 |  9 | 10 |      |
@@ -80,15 +76,14 @@ static const size_t aduRtuStart = transactionIdSize + protocolIdSize + lengthSiz
 static const size_t aduAsciiStart = aduRtuStart - asciiStartSize; // Начало ascii фрейма
 
 // Размер буфера для хранения любого типа фрейма
-static const size_t aduBufferMaxSize = std::max( aduAsciiMaxSize, std::max( aduTcpMaxSize, aduRtuMaxSize ) );
-static_assert( aduBufferMaxSize == aduAsciiMaxSize );
+static const size_t aduBufferMaxSize = std::max(aduAsciiMaxSize, std::max(aduTcpMaxSize, aduRtuMaxSize));
+static_assert(aduBufferMaxSize == aduAsciiMaxSize);
 
 /// Поля TCP
-enum class TcpField
-{
-     TransactionId,
-     ProtocolId,
-     Length,
+enum class TcpField {
+    TransactionId,
+    ProtocolId,
+    Length,
 };
 
 static const size_t transactionIdPos = aduTcpStart;
@@ -96,11 +91,10 @@ static const size_t protocolIdPos = transactionIdPos + transactionIdSize;
 static const size_t lengthPos = protocolIdPos + protocolIdSize;
 
 /// Общие поля
-enum class CommonField
-{
-     UnitId,
-     FunctionCode,
-     DataStart,
+enum class CommonField {
+    UnitId,
+    FunctionCode,
+    DataStart,
 };
 
 /// @brief Позиции общих полей
@@ -112,8 +106,8 @@ static const size_t dataASCIIPos = functionCodeASCIIPos + functionCodeSize * 2;
 
 using AduElementType = uint8_t;
 static const AduElementType aduDefaultValue = 0;
-using AduBuffer = std::vector< AduElementType >;
-using AduBufferPtr = std::unique_ptr< AduBuffer >;
+using AduBuffer = std::vector<AduElementType>;
+using AduBufferPtr = std::unique_ptr<AduBuffer>;
 
 /// @brief Создание буфера размера aduBufferMaxSize и заполнением aduDefaultValue
 /// @return
@@ -122,46 +116,44 @@ AduBuffer MakeAduBuffer();
 /// @brief Получить индекс начала записи фрейма заданного типа
 /// @param[in] type
 /// @return
-size_t GetAduStart( FrameType type );
+size_t GetAduStart(FrameType type);
 
 /// @brief Получить максимальный размер фрейма заданного типа
 /// @param[in] type
 /// @return
-size_t GetAduMaxSize( FrameType type );
+size_t GetAduMaxSize(FrameType type);
 
 /// @brief Получить минимальный размер фарейма заданного типа
 /// @param[in] type
 /// @return
-size_t GetAduMinSize( FrameType type );
+size_t GetAduMinSize(FrameType type);
 
 /// @brief Получить тествое представление типа
 /// @param[in] type
 /// @return
-std::string GetTypeName( FrameType type );
+std::string GetTypeName(FrameType type);
 
 /// @brief Получить позицию начала поля относительно начала общего буфера
 /// @param[in] frameType
 /// @param[in] commonField
 /// @return
-size_t GetPosForType( FrameType frameType, CommonField commonField );
+size_t GetPosForType(FrameType frameType, CommonField commonField);
 
 /// @brief Получить позицию начала поля относительно начала общего буфера
 /// @param[in] tcpField
 /// @return
-size_t GetPosForType( TcpField tcpField );
+size_t GetPosForType(TcpField tcpField);
 
 /// @brief Расчитать размер pdu
 /// @param[in] type тип фремйма
 /// @param[in] aduSize размер фрейма
 /// @return
-size_t CalculatePduSize( FrameType type, size_t aduSize );
+size_t CalculatePduSize(FrameType type, size_t aduSize);
 
 /// @brief Расчитать размер adu
 /// @param[in] type
 /// @param[in] pduSize
 /// @return
-size_t CalculateAduSize( FrameType type, size_t pduSize );
+size_t CalculateAduSize(FrameType type, size_t pduSize);
 
 }
-
-#endif

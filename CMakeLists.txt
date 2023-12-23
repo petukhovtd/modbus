@@ -4,7 +4,7 @@ project(modbus)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED 17)
 
-option(MODBUS_TEST "Enable unit-test" OFF)
+option(MODBUS_TEST "Enable tests" OFF)
 option(MODBUS_EXAMPLE "Enable example" OFF)
 
 add_subdirectory(contrib)
