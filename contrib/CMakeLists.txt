@@ -1,3 +1,3 @@
-if(MODBUS_UNIT_TEST)
+if(MODBUS_TEST)
      add_subdirectory(googletest)
 endif()
