@@ -3,6 +3,8 @@
 #include <modbus/modbus_buffer_tcp_wrapper.h>
 #include <modbus/modbus_buffer_ascii_wrapper.h>
 
+#include <stdexcept>
+
 namespace modbus
 {
 

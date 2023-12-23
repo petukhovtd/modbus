@@ -1,5 +1,7 @@
 #include <modbus/modbus_framing.h>
 
+#include <stdexcept>
+
 namespace modbus
 {
 

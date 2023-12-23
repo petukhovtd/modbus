@@ -1,4 +1,4 @@
-project(unit-test)
+project(test)
 
 set(${PROJECT_NAME}_SOURCE
           modbus_common.cpp

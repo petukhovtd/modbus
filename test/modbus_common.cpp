@@ -1,5 +1,7 @@
 #include "modbus_common.h"
 
+#include <stdexcept>
+
 namespace test
 {
 
